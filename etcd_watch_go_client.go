@@ -28,7 +28,7 @@ func main() {
 
 	defer etcd.Close()
 
-	rch := etcd.Watch(context.Background(), *etcdWatchKey)
+	watchChan := etcd.Watch(context.Background(), *etcdWatchKey)
 	fmt.Println("set WATCH on " + *etcdWatchKey)
 
 	go func() {
@@ -41,9 +41,9 @@ func main() {
 
 	}()
 
-	for wresp := range rch {
-		for _, ev := range wresp.Events {
-			fmt.Printf("Event received! %s executed on %q with value %q\n", ev.Type, ev.Kv.Key, ev.Kv.Value)
+	for watchResp := range watchChan {
+		for _, event := range watchResp.Events {
+			fmt.Printf("Event received! %s executed on %q with value %q\n", event.Type, event.Kv.Key, event.Kv.Value)
 		}
 	}
 }
